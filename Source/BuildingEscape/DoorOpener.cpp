@@ -2,6 +2,7 @@
 
 #include "DoorOpener.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UDoorOpener::UDoorOpener()
@@ -18,13 +19,34 @@ UDoorOpener::UDoorOpener()
 void UDoorOpener::BeginPlay()
 {
 	Super::BeginPlay();
+	ActorWhoCanOpenDoor = GetWorld()->GetFirstPlayerController()->GetPawn();
+}
+
+void UDoorOpener::ActorEndOverlap(AActor * Self, AActor * OtherActor)
+{
+	CloseDoor();
+}
+
+void UDoorOpener::CloseDoor()
+{
+	//Close door
+	UE_LOG(LogTemp, Warning, TEXT("Close the god damn door!"));
+	GetOwner()->SetActorRotation(FRotator(0,0,0));
+}
+
+void UDoorOpener::OpenDoor()
+{
+	DoorIsOpen = true;
 	//Find the owning actor
 	AActor *Owner = GetOwner();
 	//Create rotator
-	FRotator NewDoorRotation(0.0f, 70.0f, 0.0f);
+	FRotator NewDoorRotation(0.0f, OpenAngle, 0.0f);
+	UE_LOG(LogTemp, Warning, TEXT("Open the god damn door!"));
 	//Set door rotation
 	Owner->SetActorRotation(NewDoorRotation);
 }
+
+
 
 
 // Called every frame
@@ -32,6 +54,10 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	//if the actor that opens is in the volume, open the door
+	if (PressurePlate->IsOverlappingActor(ActorWhoCanOpenDoor) && !DoorIsOpen)
+	{
+		OpenDoor();
+	}
 }
 

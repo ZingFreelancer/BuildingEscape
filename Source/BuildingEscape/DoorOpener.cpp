@@ -24,6 +24,7 @@ void UDoorOpener::BeginPlay()
 
 void UDoorOpener::ActorEndOverlap(AActor * Self, AActor * OtherActor)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Actor end overlap"));
 	CloseDoor();
 }
 
@@ -36,18 +37,12 @@ void UDoorOpener::CloseDoor()
 
 void UDoorOpener::OpenDoor()
 {
-	DoorIsOpen = true;
-	//Find the owning actor
-	AActor *Owner = GetOwner();
 	//Create rotator
 	FRotator NewDoorRotation(0.0f, OpenAngle, 0.0f);
 	UE_LOG(LogTemp, Warning, TEXT("Open the god damn door!"));
 	//Set door rotation
-	Owner->SetActorRotation(NewDoorRotation);
+	GetOwner()->SetActorRotation(NewDoorRotation);
 }
-
-
-
 
 // Called every frame
 void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -57,7 +52,17 @@ void UDoorOpener::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	//if the actor that opens is in the volume, open the door
 	if (PressurePlate->IsOverlappingActor(ActorWhoCanOpenDoor) && !DoorIsOpen)
 	{
+		DoorIsOpen = true;
 		OpenDoor();
+		LastDoorOpenTimer = GetWorld()->GetTimeSeconds();
 	}
+	else if (DoorIsOpen && !PressurePlate->IsOverlappingActor(ActorWhoCanOpenDoor) && (GetWorld()->GetTimeSeconds() - LastDoorOpenTimer > DoorCloseDelay))	//Check if door should be closed
+	{
+		CloseDoor();
+		DoorIsOpen = false;
+	}
+
+
+
 }
 

@@ -26,10 +26,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 private:
 	bool DoorIsOpen = false;
-	UPROPERTY(VisibleAnywhere)
-	float OpenAngle = 80;
+	float LastDoorOpenTimer = 0;
 
-	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
+	UPROPERTY(EditAnywhere)float OpenAngle = 80.0f;
+	UPROPERTY(EditAnywhere)float DoorCloseDelay = 1.0f;
+	UPROPERTY(EditAnywhere)ATriggerVolume* PressurePlate;
 	AActor* ActorWhoCanOpenDoor;
 };

@@ -12,3 +12,5 @@ Content/StarterContent/
 ######################
 *.VC.db
 .vs/BuildingEscape/v15/ipch/
+*.VC.opendb
+*.sln

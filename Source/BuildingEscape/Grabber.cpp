@@ -3,6 +3,7 @@
 #include "Engine/World.h"
 #include "Gameframework/Actor.h"
 #include "DrawDebugHelpers.h"
+#include "Components/PrimitiveComponent.h"
 #include "CollisionQueryParams.h"
 
 #define OUT
@@ -58,7 +59,14 @@ void UGrabber::FindActorPhysicsHandle()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	if (PhysicsHandle->GrabbedComponent)
+	{
+		FVector OUT PlayerViewPointLocation;
+		FRotator OUT PlayerViewPointRoration;
+		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerViewPointLocation, PlayerViewPointRoration);
+		FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRoration.Vector() * ViewReach;
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 	
 }
 
@@ -86,12 +94,15 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 
 void UGrabber::GrabItem()
 {
-	//TODO Attach physics handle
-	GetFirstPhysicsBodyInReach();
+	auto HitBodyInreach = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitBodyInreach.GetComponent();
+	auto ActorHit = HitBodyInreach.GetActor();
+	if(ActorHit)
+		PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(), true);
 }
 
 void UGrabber::ReleaseItem()
 {
-	//TODO Release physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 

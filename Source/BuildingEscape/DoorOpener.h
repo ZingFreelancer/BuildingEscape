@@ -5,6 +5,8 @@
 #include "Engine/TriggerVolume.h"
 #include "DoorOpener.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class BUILDINGESCAPE_API UDoorOpener : public UActorComponent
 {
@@ -13,6 +15,7 @@ class BUILDINGESCAPE_API UDoorOpener : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UDoorOpener();
+	UPROPERTY(BlueprintAssignable)FOnOpenRequest OnOpenRequest;
 
 protected:
 	// Called when the game starts
@@ -30,6 +33,8 @@ private:
 
 	UPROPERTY(EditAnywhere)float OpenAngle = 80.0f;
 	UPROPERTY(EditAnywhere)float DoorCloseDelay = 1.0f;
-	UPROPERTY(EditAnywhere)ATriggerVolume* PressurePlate;
-	AActor* ActorWhoCanOpenDoor;
+	UPROPERTY(EditAnywhere)ATriggerVolume* PressurePlate = nullptr;
+
+private:
+	float GetTotalMassInsideTrigger();
 };

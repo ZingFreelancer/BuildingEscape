@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
+#include "Components/PrimitiveComponent.h"
 #include "CoreMinimal.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h" 
 #include "Components/ActorComponent.h"
@@ -19,14 +19,15 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
 	void SetupInputComponent();
-
 	void FindActorPhysicsHandle();
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
+
 private: ///Variables
 	float ViewReach = 150;
 	UPhysicsHandleComponent *PhysicsHandle = nullptr;
@@ -38,4 +39,6 @@ private: ///Functions
 	void GrabItem();
 	//Release grabbed item
 	void ReleaseItem();
+	FVector GetLineTraceStart();
+	FVector GetLineTraceEnd();
 };
